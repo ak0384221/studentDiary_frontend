@@ -1,9 +1,4 @@
-import { ButtonHTMLAttributes } from "react";
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger" | "success";
-  size?: "sm" | "md" | "lg";
-}
+import { ButtonProps } from "@/types";
 
 export const Button = ({
   variant = "primary",

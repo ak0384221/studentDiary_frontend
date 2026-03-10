@@ -5,15 +5,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import {
-  Homework,
   updateHomeworkDescription,
   updateHomeworkStatus,
 } from "@/features/homeworks/api";
-
-interface HomeworkItemProps {
-  homework: Homework;
-  onUpdate: () => void;
-}
+import { HomeworkItemProps } from "@/types";
 
 const getStatusColor = (status: string) => {
   switch (status) {

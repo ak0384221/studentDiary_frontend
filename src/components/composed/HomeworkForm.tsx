@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { createHomework } from "@/features/homeworks/api";
-
-interface HomeworkFormProps {
-  studentId: string;
-  onSuccess: () => void;
-}
+import { HomeworkFormProps } from "@/types";
 
 export const HomeworkForm = ({ studentId, onSuccess }: HomeworkFormProps) => {
   const [subject, setSubject] = useState("");

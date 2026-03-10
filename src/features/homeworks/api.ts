@@ -1,17 +1,5 @@
-import { apiRequest, ApiResponse } from "@/utils/api";
-
-export interface Homework {
-  id: string;
-  studentId: string;
-  subject: string;
-  description: string;
-  status: "Pending" | "Completed" | "Missed";
-  createdAt: string;
-  updatedAt: string;
-}
-
-export type HomeworksResponse = ApiResponse<Homework[]>;
-export type HomeworkResponse = ApiResponse<Homework | Homework[]>;
+import { apiRequest } from "@/utils/api";
+import { Homework, HomeworksResponse, HomeworkResponse } from "@/types";
 
 const getHomeworksByStudentId = async (
   studentId: string,

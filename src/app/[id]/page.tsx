@@ -1,44 +1,42 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { HomeworkForm } from "@/components/composed/HomeworkForm";
 import { HomeworkItem } from "@/components/composed/HomeworkItem";
-import { getHomeworksByStudentId, Homework } from "@/features/homeworks/api";
-import { updateStudent } from "@/features/students/api";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { PieChart } from "@/components/composed/PieChart";
+import { StudentInfoSection } from "@/components/composed/StudentInfoSection";
+import { useStudentHomeworks } from "@/hooks";
+import { getStudents } from "@/features/students/api";
+import { Student } from "@/types";
 
 export default function StudentHomeworks() {
   const { id } = useParams();
-  const [homeworks, setHomeworks] = useState<Homework[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [phoneUpdate, setPhoneUpdate] = useState("");
-  const [code, setCode] = useState("");
-  const [updateError, setUpdateError] = useState("");
-  const [updateLoading, setUpdateLoading] = useState(false);
+  const [student, setStudent] = useState<Student | null>(null);
+  const [studentLoading, setStudentLoading] = useState(true);
 
-  const fetchHomeworks = useCallback(async () => {
-    if (!id || typeof id !== "string") return;
-    try {
-      const { data } = await getHomeworksByStudentId(id);
-      if (Array.isArray(data)) {
-        setHomeworks(
-          [...data].sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          ),
-        );
-      } else {
-        setHomeworks([]);
+  const { homeworks, loading, error, fetchHomeworks, stats } =
+    useStudentHomeworks(id);
+
+  // Fetch student details
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const { data } = await getStudents();
+        if (Array.isArray(data)) {
+          const found = data.find((s) => s.id === id);
+          setStudent(found || null);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setStudentLoading(false);
       }
-    } catch (err) {
-      setError("Failed to fetch homeworks");
-      console.error(err);
-    } finally {
-      setLoading(false);
+    };
+
+    if (id) {
+      fetchStudent();
     }
   }, [id]);
 
@@ -60,18 +58,14 @@ export default function StudentHomeworks() {
       </div>
     );
 
-  const pendingCount = homeworks.filter((h) => h.status === "Pending").length;
-  const completedCount = homeworks.filter(
-    (h) => h.status === "Completed",
-  ).length;
-  const missedCount = homeworks.filter((h) => h.status === "Missed").length;
-
-  const total = homeworks.length;
-  const completedPercent =
-    total > 0 ? Math.round((completedCount / total) * 100) : 0;
-  const pendingPercent =
-    total > 0 ? Math.round((pendingCount / total) * 100) : 0;
-  const missedPercent = total > 0 ? Math.round((missedCount / total) * 100) : 0;
+  const {
+    pendingCount,
+    completedCount,
+    missedCount,
+    completedPercent,
+    pendingPercent,
+    missedPercent,
+  } = stats;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-100 via-blue-50 to-indigo-100 ">
@@ -102,122 +96,20 @@ export default function StudentHomeworks() {
         )}
 
         {/* Stats Chart */}
-        <div className="mb-8 p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
-          <h3 className="text-xl font-semibold mb-6 text-gray-900 flex items-center gap-2">
-            <span className="text-2xl">📊</span> Homework Status Overview
-          </h3>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                <span>Completed (Passing Rate)</span>
-                <span>
-                  {completedPercent}% ({completedCount})
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div
-                  className="bg-green-500 h-4 rounded-full transition-all duration-500"
-                  style={{ width: `${completedPercent}%` }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                <span>Pending</span>
-                <span>
-                  {pendingPercent}% ({pendingCount})
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div
-                  className="bg-yellow-500 h-4 rounded-full transition-all duration-500"
-                  style={{ width: `${pendingPercent}%` }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                <span>Missed (Missing Rate)</span>
-                <span>
-                  {missedPercent}% ({missedCount})
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div
-                  className="bg-red-500 h-4 rounded-full transition-all duration-500"
-                  style={{ width: `${missedPercent}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Update student phone (requires secret code) */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <h2 className="text-lg font-semibold mb-3">Update Phone</h2>
-          {updateError && (
-            <div className="mb-3 p-2 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded">
-              {updateError}
-            </div>
-          )}
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                New phone
-              </label>
-              <Input
-                value={phoneUpdate}
-                onChange={(e) => setPhoneUpdate(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Secret code
-              </label>
-              <Input
-                type="password"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-              />
-            </div>
-            <Button
-              variant="primary"
-              disabled={updateLoading}
-              onClick={async () => {
-                setUpdateError("");
-                if (!phoneUpdate || !code) {
-                  setUpdateError("both fields are required");
-                  return;
-                }
-                setUpdateLoading(true);
-                try {
-                  const res = await updateStudent({
-                    id: id as string,
-                    phone: phoneUpdate,
-                    secretCode: code,
-                  });
-                  if (!res.ok) {
-                    setUpdateError(res.error || "update failed");
-                  } else {
-                    setPhoneUpdate("");
-                    setCode("");
-                  }
-                } catch (err) {
-                  console.error(err);
-                  setUpdateError("update failed");
-                } finally {
-                  setUpdateLoading(false);
-                }
-              }}
-              size="md"
-            >
-              {updateLoading ? "⏳ Updating" : "✅ Update"}
-            </Button>
-          </div>
-        </div>
+        <PieChart
+          completedPercent={completedPercent}
+          pendingPercent={pendingPercent}
+          missedPercent={missedPercent}
+          completedCount={completedCount}
+          pendingCount={pendingCount}
+          missedCount={missedCount}
+        />
 
         {/* Create Homework Form */}
         <HomeworkForm studentId={id as string} onSuccess={fetchHomeworks} />
+
+        {/* Student Info Section */}
+        <StudentInfoSection student={student} loading={studentLoading} />
 
         {/* Homeworks List */}
         {homeworks.length === 0 ? (

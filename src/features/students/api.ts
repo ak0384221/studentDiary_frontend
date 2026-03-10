@@ -1,22 +1,5 @@
-import { apiRequest, ApiResponse } from "@/utils/api";
-
-export type Student = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  service: "FREE" | "GOLD";
-  // note: secretCode is not returned in list
-};
-
-export type StudentResponse = ApiResponse<Student[]>;
-export type CreateStudentParams = {
-  name: string;
-  email: string;
-  phone: string;
-  service: "FREE" | "GOLD";
-  secretCode: string;
-};
+import { apiRequest } from "@/utils/api";
+import { Student, StudentResponse, CreateStudentParams } from "@/types";
 
 const getStudents = async (): Promise<StudentResponse> => {
   return (await apiRequest("/students")) as StudentResponse;

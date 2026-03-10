@@ -1,24 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
-import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { createStudent, Student } from "@/features/students/api";
+import { createStudent } from "@/features/students/api";
 import { useRouter } from "next/navigation";
-
-const studentSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
-  phone: z.string().min(1, "Phone is required"),
-  service: z.enum(["FREE", "GOLD"]),
-  secretCode: z.string().min(1, "Secret code is required"),
-});
-
-type StudentInput = z.infer<typeof studentSchema>;
-
-interface StudentFormProps {
-  existingStudents: Student[];
-}
+import {
+  StudentFormProps,
+  studentSchema,
+  StudentInput,
+  Student,
+} from "@/types";
 
 export const StudentForm = ({ existingStudents }: StudentFormProps) => {
   const [form, setForm] = useState<StudentInput>({

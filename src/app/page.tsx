@@ -1,6 +1,7 @@
 import { StudentCard } from "@/components/composed/StudentCard";
 import { StudentForm } from "@/components/composed/StudentForm";
-import { getStudents, Student } from "@/features/students/api";
+import { getStudents } from "@/features/students/api";
+import { Student } from "@/types";
 
 export default async function Home() {
   const { data, ok, status, error } = await getStudents();

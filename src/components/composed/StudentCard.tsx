@@ -1,9 +1,5 @@
 import Link from "next/link";
-import { Student } from "@/features/students/api";
-
-interface StudentCardProps {
-  student: Student;
-}
+import { StudentCardProps } from "@/types";
 
 export const StudentCard = ({ student }: StudentCardProps) => {
   return (

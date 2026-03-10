@@ -1,11 +1,6 @@
-const API_BASE_URL = "http://localhost:5000/api/v1"; // adjust if needed
+import { ApiResponse } from "@/types";
 
-export type ApiResponse<T = unknown> = {
-  data: T;
-  ok: boolean;
-  status: number;
-  error: string | null;
-};
+const API_BASE_URL = "http://localhost:5000/api/v1"; // adjust if needed
 
 export const apiRequest = async (
   endpoint: string,
