@@ -1,65 +1,71 @@
-import Image from "next/image";
+import { StudentCard } from "@/components/composed/StudentCard";
+import { StudentForm } from "@/components/composed/StudentForm";
+import { getStudents, Student } from "@/features/students/api";
 
-export default function Home() {
+export default async function Home() {
+  const { data, ok, status, error } = await getStudents();
+  console.log(data, ok, status, error);
+
+  //error ui
+  if (error) {
+    return (
+      <>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg">
+            {error}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  //if no error occurs
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-linear-to-br from-slate-100 via-blue-50 to-indigo-100 ">
+      {/* Header */}
+      <div className="bg-linear-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+            <span className="text-5xl">📚</span> Student Diary
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-blue-100 text-lg">
+            Manage and track student homeworks effortlessly
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {/* Main Content */}
+
+      {/* student creation form */}
+      <div className="w-5/6 mx-auto mt-8">
+        <StudentForm existingStudents={data || []} />
+      </div>
+
+      {data && data.length === 0 ? (
+        <div className="text-center py-16 w-5/6">
+          <div className="text-6xl mb-4">😴</div>
+          <p className="text-gray-600 text-lg">
+            No students found. Please add some students first.
+          </p>
         </div>
-      </main>
+      ) : (
+        <>
+          <div className="mb-8 w-5/6 border mx-auto my-5">
+            <p className="text-gray-700 text-lg font-medium">
+              👥 Total Students:{" "}
+              <span className="text-blue-600 font-bold">
+                {data?.length || 0}
+              </span>
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-5/6 border mx-auto my-5">
+            {data?.map((student: Student) => (
+              <StudentCard key={student.id} student={student} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
