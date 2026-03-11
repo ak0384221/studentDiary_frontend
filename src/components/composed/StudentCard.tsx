@@ -25,10 +25,10 @@ export const StudentCard = ({ student }: StudentCardProps) => {
           <span className="font-semibold text-gray-700">Email:</span>{" "}
           {student.email}
         </p>
-        <p className="text-sm text-gray-600">
+        {/* <p className="text-sm text-gray-600">
           <span className="font-semibold text-gray-700">Phone:</span>{" "}
           {student.phone}
-        </p>
+        </p> */}
       </div>
       <div className="mt-2">
         <span

@@ -1,3 +1,7 @@
+// ensure this route is treated as dynamic and never statically cached
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
 import { StudentCard } from "@/components/composed/StudentCard";
 import { StudentForm } from "@/components/composed/StudentForm";
 import { getStudents } from "@/features/students/api";

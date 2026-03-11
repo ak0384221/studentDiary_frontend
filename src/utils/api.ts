@@ -1,12 +1,10 @@
 import { ApiResponse } from "@/types";
 
-const API_BASE_URL = "http://localhost:5000/api/v1"; // adjust if needed
-
 export const apiRequest = async (
   endpoint: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<unknown>> => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`;
 
   try {
     const response = await fetch(url, {
