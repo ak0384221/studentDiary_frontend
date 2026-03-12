@@ -75,7 +75,7 @@ export const PieChart = ({
                 <span className="text-sm font-medium text-gray-700">
                   Completed
                 </span>
-                <span className="text-sm font-bold text-green-600">
+                <span className="text-sm font-bold text-green-600 mx-2">
                   {completedCount}
                 </span>
               </div>
@@ -90,7 +90,7 @@ export const PieChart = ({
                 <span className="text-sm font-medium text-gray-700">
                   Pending
                 </span>
-                <span className="text-sm font-bold text-yellow-600">
+                <span className="text-sm font-bold text-yellow-600 mx-2">
                   {pendingCount}
                 </span>
               </div>
@@ -105,7 +105,7 @@ export const PieChart = ({
                 <span className="text-sm font-medium text-gray-700">
                   Missed
                 </span>
-                <span className="text-sm font-bold text-red-600">
+                <span className="text-sm font-bold text-red-600 mx-2">
                   {missedCount}
                 </span>
               </div>

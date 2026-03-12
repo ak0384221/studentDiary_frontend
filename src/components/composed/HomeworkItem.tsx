@@ -98,14 +98,14 @@ export const HomeworkItem = ({ homework, onUpdate }: HomeworkItemProps) => {
 
       {editing ? (
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-black mb-1">
             Edit Description
           </label>
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full"
+            className="w-full text-black px-2 border"
           />
         </div>
       ) : (
@@ -130,7 +130,7 @@ export const HomeworkItem = ({ homework, onUpdate }: HomeworkItemProps) => {
             type="password"
             value={editSecret}
             onChange={(e) => setEditSecret(e.target.value)}
-            className="w-full"
+            className="w-full text-black p-2 border"
           />
         </div>
       )}
@@ -138,7 +138,7 @@ export const HomeworkItem = ({ homework, onUpdate }: HomeworkItemProps) => {
       {/* when changing status, show inline code entry and confirm/cancel */}
       {statusAction !== null && (
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-black mb-1">
             Secret Code to {statusAction ? "complete" : "mark missed"}
           </label>
           <div className="flex gap-2">
@@ -146,7 +146,7 @@ export const HomeworkItem = ({ homework, onUpdate }: HomeworkItemProps) => {
               type="password"
               value={statusSecret}
               onChange={(e) => setStatusSecret(e.target.value)}
-              className="flex-1 bg-red-400 rounded-md text-white font-bold px-2"
+              className="flex-1 border border-black rounded-md text-black tracking-wider text-xl font-bold px-2"
             />
             <Button
               size="sm"
@@ -194,6 +194,12 @@ export const HomeworkItem = ({ homework, onUpdate }: HomeworkItemProps) => {
       )}
 
       <div className="flex gap-2 flex-wrap">
+        {editing && (
+          <Button onClick={() => setEditing(false)} variant="danger" size="sm">
+            Cancel
+          </Button>
+        )}
+
         <Button
           onClick={handleEdit}
           disabled={loading}

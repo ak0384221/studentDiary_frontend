@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-blue-500">
       <div className="text-center">
         <div className="inline-block animate-spin">
           <div className="text-4xl">📚</div>
