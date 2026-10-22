@@ -1,10 +1,30 @@
 import { ApiResponse } from "@/types";
 
+const getApiBaseUrl = () => {
+  const isServer = typeof window === "undefined";
+  const rawBase = isServer
+    ? process.env.API_URL
+    : process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!rawBase) {
+    throw new Error(
+      `Missing ${isServer ? "API_URL" : "NEXT_PUBLIC_API_BASE_URL"}`,
+    );
+  }
+
+  const cleanBase = rawBase.replace(/\/+$/, "");
+  return cleanBase.endsWith("/api/v1") ? cleanBase : `${cleanBase}/api/v1`;
+};
+
 export const apiRequest = async (
   endpoint: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<unknown>> => {
-  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`;
+  const baseUrl = getApiBaseUrl();
+  const normalizedEndpoint = endpoint.startsWith("/")
+    ? endpoint
+    : `/${endpoint}`;
+  const url = `${baseUrl}${normalizedEndpoint}`;
 
   try {
     const response = await fetch(url, {
